@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details</title>
+</head>
+<body>
+    <h1>Patient Details</h1>
+    <h2>{{ patient.name }}</h2>
+    <p>Phone Number: {{ patient.phone_number }}</p>
+    <p>Appointment Date: {{ patient.appointment_date }}</p>
+    <!-- Add more patient details as needed -->
+    <a href="{% url 'write_diagnostic' patient.id %}">Write Diagnostic</a>
+</body>
+</html>

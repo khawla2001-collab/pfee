@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Patient</title>
+</head>
+<body>
+    <h1>View Patient</h1>
+    <p>Patient Name: {{ patient.first_name }} {{ patient.last_name }}</p>
+    <p>Phone Number: {{ patient.phone_number }}</p>
+    
+    <h2>Analyses:</h2>
+    <ul>
+        {% for analysis in analyses %}
+            <li>
+                <strong>Analysis ID:</strong> {{ analysis.analysis_id }}<br>
+                <strong>Diagnostic Date:</strong> {{ analysis.analysis_date }}<br>
+                <strong>Textual Diagnostic:</strong> {{ analysis.textual_diagnostic }}<br>
+                <!-- Add any other fields you want to display -->
+            </li>
+            <hr>
+        {% empty %}
+            <li>No analyses found for this patient.</li>
+        {% endfor %}
+    </ul>
+    
+    <!-- Add links or buttons for navigation -->
+</body>
+</html>

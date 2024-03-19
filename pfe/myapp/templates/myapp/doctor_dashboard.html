@@ -1,0 +1,28 @@
+<!-- doctor_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, Dr. {{ doctor.user.last_name }}</h1>
+    <!-- Patient List -->
+    <h2>Patients List</h2>
+    <ul>
+        {% for patient in doctor.patients.all %}
+            <li>{{ patient.first_name }} {{ patient.last_name }} - {{ patient.phone }}</li>
+        {% endfor %}
+    </ul>
+    <!-- Load Patient IRM Images -->
+    <h2>Load Patient IRM Images</h2>
+    <!-- Form to Load Images -->
+    <!-- Load Curves for Each Patient -->
+    <h2>Load Curves for Each Patient</h2>
+    <!-- List of Patients with Links to their Curves -->
+    <!-- Write Diagnostic -->
+    <h2>Write Diagnostic</h2>
+    <!-- Form to Write Diagnostic -->
+</body>
+</html>
