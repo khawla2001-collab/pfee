@@ -62,31 +62,31 @@ def my_login(request):
     if request.method == "POST":
         form = LoginForm(data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            username_or_email = form.cleaned_data.get('username_or_email')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=username_or_email, password=password)  # Use authenticate correctly
             if user is not None:
                 login(request, user)
-                return redirect("dashboard")  # Redirect to dashboard page
+                messages.success(request, f"Welcome back, {user.username}!")
+                return redirect('dashboard')  # Redirect to the dashboard upon successful login
             else:
-                messages.error(request, "Invalid username or password. Please try again.")
+                messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
 
     context = {'loginform': form}
     return render(request, "myapp/my_login.html", context)
 @login_required(login_url="my_login")
-def doctor_dashboard(request):
-    doctor = Doctor.objects.get(user=request.user)
-    context = {'doctor': doctor}
-    return render(request, "myapp/doctor_dashboard.html", context)
+def dashboard(request):
+    return render(request, "myapp/dashboard.html")
 
 @login_required(login_url="my_login")
 def secretary_dashboard(request):
-    secretary = Secretary.objects.get(user=request.user)
-    context = {'secretary': secretary}
-    return render(request, "myapp/secretary_dashboard.html", context)
+    return render(request, "myapp/secretary_dashboard.html")
 
+@login_required(login_url="my_login")
+def doctor_dashboard(request):
+    return render(request, "myapp/doctor_dashboard.html")
 @login_required
 def dashboard(request):
     context = {}  # Add any context data you want to pass to the template

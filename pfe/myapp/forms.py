@@ -66,16 +66,17 @@ class LoginForm(AuthenticationForm):
 
         # Check if the provided username or email exists and authenticate accordingly
         user = None
-        if '@' in username_or_email:
-            # Treat it as an email
-            user = authenticate(email=username_or_email, password=password)
-        else:
-            # Treat it as a username
-            user = authenticate(username=username_or_email, password=password)
+        if username_or_email:  # Check if the field has a value
+            if '@' in username_or_email:
+                # Treat it as an email
+                user = authenticate(email=username_or_email, password=password)
+            else:
+                # Treat it as a username
+                user = authenticate(username=username_or_email, password=password)
 
         if not user:
             raise forms.ValidationError("Invalid username or password.")
-        
+
         # Set the authenticated user to the cleaned data
         cleaned_data['user'] = user
         return cleaned_data
