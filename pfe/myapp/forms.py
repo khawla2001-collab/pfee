@@ -55,32 +55,20 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 
 
+
 class LoginForm(AuthenticationForm):
-    username_or_email = forms.CharField(label="Username or Email", max_length=254)
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    email = forms.EmailField(label="Email", widget=EmailInput())
+    password = forms.CharField(label="Password", widget=PasswordInput())
 
-    def clean(self):
-        cleaned_data = super().clean()
-        username_or_email = cleaned_data.get('username_or_email')
-        password = cleaned_data.get('password')
+    class Meta:
+        fields = ['email', 'password']  # Define the field order
 
-        # Check if the provided username or email exists and authenticate accordingly
-        user = None
-        if username_or_email:  # Check if the field has a value
-            if '@' in username_or_email:
-                # Treat it as an email
-                user = authenticate(email=username_or_email, password=password)
-            else:
-                # Treat it as a username
-                user = authenticate(username=username_or_email, password=password)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        if not user:
-            raise forms.ValidationError("Invalid username or password.")
-
-        # Set the authenticated user to the cleaned data
-        cleaned_data['user'] = user
-        return cleaned_data
-
+        # Override the default fields with custom fields
+        self.fields['username'] = self.fields.pop('username', None)
+        self.fields['password'] = self.fields.pop('password', None)
 from .models import Patient, Appointment, Analysis
 
 

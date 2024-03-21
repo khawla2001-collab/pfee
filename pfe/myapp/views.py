@@ -5,8 +5,10 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.urls import reverse
 from .forms import LoginForm, DoctorRegistrationForm, SecretaryRegistrationForm, AppointmentForm, PatientForm, AnalysisForm
 from .models import Doctor, Secretary, Patient, Analysis
+from .forms import LoginForm
 
 
 def home(request):
@@ -50,32 +52,34 @@ def register_secretary(request):
 
     context = {'RegistrationForm': form}
     return render(request, "myapp/register-secretary.html", context)
-
-# views.py
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import LoginForm
-from django.urls import reverse
+from django.contrib.auth.models import Group
 
 def my_login(request):
     if request.method == "POST":
         form = LoginForm(data=request.POST)
         if form.is_valid():
-            username_or_email = form.cleaned_data.get('username_or_email')
+            username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username_or_email, password=password)  # Use authenticate correctly
+            user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Welcome back, {user.username}!")
-                return redirect('dashboard')  # Redirect to the dashboard upon successful login
+                if user.is_superuser:
+                    return redirect("admin:index")  # Redirect superusers to admin panel
+                elif user.groups.filter(name='Secretary').exists():
+                    return redirect(reverse("secretary_dashboard"))  # Redirect secretaries to secretary dashboard
+                elif user.groups.filter(name='Doctor').exists():
+                    return redirect(reverse("doctor_dashboard"))  # Redirect doctors to doctor dashboard
+                else:
+                    return redirect("dashboard")  # Redirect regular users to dashboard
             else:
-                messages.error(request, "Invalid username or password.")
+                # If authentication fails, display an error message
+                messages.error(request, "Invalid username or password. Please try again.")
     else:
         form = LoginForm()
 
     context = {'loginform': form}
     return render(request, "myapp/my_login.html", context)
+
 @login_required(login_url="my_login")
 def dashboard(request):
     return render(request, "myapp/dashboard.html")
